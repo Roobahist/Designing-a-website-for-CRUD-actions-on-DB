@@ -1,0 +1,229 @@
+{% extends 'base.html' %} 
+{% block title %} Skill {% endblock %} 
+
+{% block body %}
+<head>
+    <style>
+        table {
+            position: absolute;
+            top:100px;
+            font-family: arial, sans-serif;
+            font-size: 1.2vw;
+            width: 97%;
+            margin-left: 1.5%;
+        }
+
+        td,
+        th{
+            border: 2px solid #000000;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            color :#ffffff;
+            background-color: #571f96;
+            font-size: larger;
+            font-weight: 600;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #d6d6d6;
+        }
+
+        #update{
+            color:#000000;
+            background-color: #ff9900;
+            border-color: #ff9900;
+        }
+        #update:hover{
+            color:#000000;
+            background-color: #c77e11;
+            border-color: #c77e11;
+        }
+
+        #delete{
+            color:#ffffff;
+            background-color: #b80707;
+            border-color: #b80707;
+        }
+        #delete:hover{
+            color:#ffffff;
+            background-color: #990606;
+            border-color: #990606;
+        }
+
+        .weekDays-selector input {
+        display: none!important;
+        }
+
+        .weekDays-selector input[type=checkbox] + label {
+        display: inline-block;
+        border-radius: 6px;
+        background: #dddddd;
+        height: 40px;
+        width: 55px;
+        margin-right: 3px;
+        line-height: 40px;
+        text-align: center;
+        cursor: pointer;
+        }
+
+        .weekDays-selector input[type=checkbox]:checked + label {
+        background: #229e06;
+        color: #ffffff;
+        }
+        .modal-footer{
+            height:60px;
+        }
+        #title{
+            text-align: center;
+        }
+        #addbutton{
+            position: absolute;
+            top:20px;
+            right:1.5%;
+        }
+        #tables_dropdown{
+            position: absolute;
+            top:20px;
+            left:1.5%;
+        }
+        #dropdownMenuButton{
+            background: rgb(90, 6, 22);
+        }
+        .red{
+            color : #ff0000;
+        }
+        th.num{
+            width:3%;
+        }
+        th.action{
+            width:18%;
+        }
+
+    </style>
+</head>
+
+<div class="jumbotron p-3">
+    <div class="dropdown" id='tables_dropdown'>
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-flip="false" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Other Tables
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% set relation_tables = ['course_gives_skill','employee_attends_course','employee_has_skill'] %}
+            {% for table in other_tables %}
+                {% if table in relation_tables %}
+                <a class="dropdown-item" href="/relation/{{table}}">{{table}}</a>
+                {% else %}
+                <a class="dropdown-item" href="/{{table}}">{{table}}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <h2 id='title'><b>Skill</b></h2>
+    <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#CreateModal" id='addbutton'>Create New Skill</button>
+</div>
+
+
+
+<table>
+    <tr>
+        <th class="num">#</th>
+        <th><u>Skill ID</u></th>
+        <th>Skill Name</th>
+        <th>Skill Description</th>
+        <th class="action">Actions</th>
+    </tr>
+
+    {% for record in table_records %}
+        
+        <tr>
+            <td><b>{{loop.index}}</b></td>
+            <td>{{record.skill_id}}</td>
+            <td>{{record.skill_name}}</td>
+            <td>{{record.skill_desc}}</td>
+            <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UpdateModal{{record.skill_id}}" id=update>Update</button>
+                <a href=/delete/skill/skill_id={{record.skill_id}} >
+                    <button type="button"  class="btn btn-primary" id=delete>Delete</button>
+                </a>
+            </td>
+        </tr>
+        
+
+<div id="UpdateModal{{record.skill_id}}" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Skill Information</h4>
+            </div>
+            <div class="modal-body">
+                <form action=/update/skill/skill_id={{record.skill_id}} method="POST">
+                    <div class="form-group">
+                        <label>Skill ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="skill_id" value='{{record.skill_id}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skill Name <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="skill_name" value='{{record.skill_name}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skill Description</label>
+                        <input type="text" class="form-control" name="skill_desc" value='{{record.skill_desc}}' >
+                    </div>
+
+                    <br>
+
+                    <div class="from-group modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning ml-auto">Confirm</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</table>
+
+
+<div id="CreateModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add New Skill</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/insert/skill" method="POST">
+                    <div class="form-group">
+                        <label>Skill ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="skill_id" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skill Name <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="skill_name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skill Description</label>
+                    <input type="text" class="form-control" name="skill_desc" >
+                    </div>
+
+                    <br>
+
+                    <div class="from-group modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success ml-auto">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    {% endblock %}

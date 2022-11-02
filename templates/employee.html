@@ -1,0 +1,406 @@
+{% extends 'base.html' %} 
+{% block title %} Employee {% endblock %} 
+
+{% block body %}
+<head>
+    <style>
+        table {
+            position: absolute;
+            top:100px;
+            font-family: arial, sans-serif;
+            font-size: 1.2vw;
+            width: 97%;
+            margin-left: 1.5%;
+        }
+
+        td,
+        th{
+            border: 2px solid #000000;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            color :#ffffff;
+            background-color: #571f96;
+            font-size: larger;
+            font-weight: 600;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #d6d6d6;
+        }
+
+        #update{
+            color:#000000;
+            background-color: #ff9900;
+            border-color: #ff9900;
+        }
+        #update:hover{
+            color:#000000;
+            background-color: #c77e11;
+            border-color: #c77e11;
+        }
+
+        #delete{
+            color:#ffffff;
+            background-color: #b80707;
+            border-color: #b80707;
+        }
+        #delete:hover{
+            color:#ffffff;
+            background-color: #990606;
+            border-color: #990606;
+        }
+
+        .weekDays-selector input {
+        display: none!important;
+        }
+
+        .weekDays-selector input[type=checkbox] + label {
+        display: inline-block;
+        border-radius: 6px;
+        background: #dddddd;
+        height: 40px;
+        width: 55px;
+        margin-right: 3px;
+        line-height: 40px;
+        text-align: center;
+        cursor: pointer;
+        }
+
+        .weekDays-selector input[type=checkbox]:checked + label {
+        background: #229e06;
+        color: #ffffff;
+        }
+        .modal-footer{
+            height:60px;
+        }
+        #title{
+            text-align: center;
+        }
+        #addbutton{
+            position: absolute;
+            top:20px;
+            right:1.5%;
+        }
+        #tables_dropdown{
+            position: absolute;
+            top:20px;
+            left:1.5%;
+        }
+        #dropdownMenuButton{
+            background: rgb(90, 6, 22);
+        }
+        .red{
+            color : #ff0000;
+        }
+        th.num{
+            width:3%;
+        }
+        th.action{
+            width:18%;
+        }
+
+    </style>
+</head>
+
+<div class="jumbotron p-3">
+    <div class="dropdown" id='tables_dropdown'>
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-flip="false" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Other Tables
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% set relation_tables = ['course_gives_skill','employee_attends_course','employee_has_skill'] %}
+            {% for table in other_tables %}
+                {% if table in relation_tables %}
+                <a class="dropdown-item" href="/relation/{{table}}">{{table}}</a>
+                {% else %}
+                <a class="dropdown-item" href="/{{table}}">{{table}}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <h2 id='title'><b>Employee</b></h2>
+    <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#CreateModal" id='addbutton'>Create New Employee</button>
+</div>
+
+
+
+<table>
+    <tr>
+        <th class="num">#</th>
+        <th><u>Employee ID</u></th>
+        <th>SSN</th>
+        <th>Name</th>
+        <th>Role ID</th>
+        <th>Department ID</th>
+        <th class="action">Actions</th>
+    </tr>
+
+    {% for record in table_records %}
+        
+        <tr>
+            <td><b>{{loop.index}}</b></td>
+            <td>{{record.employee_id}}</td>
+            <td>{{record.ssn}}</td>
+            <td>{{record.name}}</td>
+            <td>{{record.role_id}}</td>
+            <td>{{record.department_id}}</td>
+            <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ReadModal{{record.employee_id}}">Read</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UpdateModal{{record.employee_id}}" id=update>Update</button>
+                <a href=/delete/employee/employee_id={{record.employee_id}} >
+                    <button type="button"  class="btn btn-primary" id=delete>Delete</button>
+                </a>
+            </td>
+        </tr>
+
+
+        <div id="ReadModal{{record.employee_id}}" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Employee Information</h4>
+                    </div>
+                    <div class="modal-body">
+                    <form>
+
+                        <div class="form-group">
+                            <label>Employee ID <span class='red'>*</span></label>
+                            <input type='number' class="form-control" name="employee_id" value='{{record.employee_id}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>SSN <span class='red'>*</span></label>
+                            <input type='number' class="form-control" name="ssn" value='{{record.ssn}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Name <span class='red'>*</span></label>
+                            <input type="text" class="form-control" name="name" value='{{record.name}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type='number' class="form-control" name="age" value='{{record.age}}' readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gender <span class='red'>*</span></label>
+                            <input type="text" class="form-control" name="gender" value='{{record.gender}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Phone Number <span class='red'>*</span></label>
+                            <input type='tel' class="form-control" name="phone_number" value='{{record.phone_number}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Address <span class='red'>*</span></label>
+                            <input type="text" class="form-control" name="address" value='{{record.address}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Income <span class='red'>*</span></label>
+                            <input type='number' class="form-control" name="income" value='{{ "%.2f" % record.income}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Role ID <span class='red'>*</span></label>
+                            <input type='number' class="form-control" name="role_id" value='{{record.role_id}}' required readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Department ID <span class='red'>*</span></label>
+                            <input type='number' class="form-control" name="department_id" value='{{record.department_id}}' required readonly>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Since <span class='red'>*</span></label>
+                            <input type="date" class="form-control" name="since" value={{record.since}} required readonly>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Until</label>
+                            <input type="date" class="form-control" name="until" value={{record.until}} readonly>
+                        </div>
+
+
+                        <br>
+                        
+                        <div class="from-group modal-footer">
+                            <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="UpdateModal{{record.employee_id}}" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Employee Information</h4>
+            </div>
+            <div class="modal-body">
+                <form action=/update/employee/employee_id={{record.employee_id}} method="POST">
+                    <div class="form-group">
+                        <label>Employee ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="employee_id" value='{{record.employee_id}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SSN <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="ssn" value='{{record.ssn}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Name <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="name" value='{{record.name}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type='number' class="form-control" name="age" value='{{record.age}}'>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Gender <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="gender" value='{{record.gender}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone Number <span class='red'>*</span></label>
+                        <input type='tel' class="form-control" name="phone_number" value='{{record.phone_number}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Address <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="address" value='{{record.address}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Income <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="income" value='{{ "%.2f" % record.income}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Role ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="role_id" value='{{record.role_id}}' required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Department ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="department_id" value='{{record.department_id}}' required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Since <span class='red'>*</span></label>
+                        <input type="date" class="form-control" name="since" value={{record.since}} required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Until</label>
+                        <input type="date" class="form-control" name="until" value={{record.until}}>
+                    </div>
+
+                    <br>
+
+                    <div class="from-group modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning ml-auto">Confirm</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</table>
+
+
+<div id="CreateModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add New Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/insert/employee" method="POST">
+                    <div class="form-group">
+                        <label>Employee ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="employee_id"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SSN <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="ssn"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Name <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="name"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type='number' class="form-control" name="age" >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Gender <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="gender"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone Number <span class='red'>*</span></label>
+                        <input type='tel' class="form-control" name="phone_number"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Address <span class='red'>*</span></label>
+                        <input type="text" class="form-control" name="address"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Income <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="income"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Role ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="role_id"  required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Department ID <span class='red'>*</span></label>
+                        <input type='number' class="form-control" name="department_id"  required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Since <span class='red'>*</span></label>
+                        <input type="date" class="form-control" name="since"  required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Until</label>
+                        <input type="date" class="form-control" name="until" >
+                    </div>
+                    
+                    <br>
+
+                    <div class="from-group modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success ml-auto">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    {% endblock %}
