@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: db_project
+      MYSQL_USER: crud
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      retries: 15
+      timeout: 5s
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL to a mysql+pymysql connection URL}
+      CRUD_ADMIN_USERNAME: ${CRUD_ADMIN_USERNAME:-admin}
+      CRUD_ADMIN_PASSWORD: ${CRUD_ADMIN_PASSWORD:?Set CRUD_ADMIN_PASSWORD}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:?Set FLASK_SECRET_KEY}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      PAGE_SIZE: ${PAGE_SIZE:-50}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

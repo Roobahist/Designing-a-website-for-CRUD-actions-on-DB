@@ -1,0 +1,69 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f6f8fb;
+  color: #1e293b;
+  line-height: 1.5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: inherit; }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+.app { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+.sidebar { padding: 28px 18px; border-right: 1px solid #e2e8f0; background: #fff; }
+.brand { display: block; padding: 2px 12px 24px; font-weight: 750; font-size: 1.2rem; text-decoration: none; }
+.brand span { color: #526b95; font-weight: 500; }
+.nav-title { margin: 0 12px 8px; color: #64748b; text-transform: uppercase; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.09em; }
+nav { display: grid; gap: 4px; }
+nav a { display: block; padding: 10px 12px; border-radius: 8px; text-decoration: none; font-size: 0.91rem; overflow-wrap: anywhere; }
+nav a:hover { background: #eef2f8; }
+nav a[aria-current="page"] { background: #e7eefc; color: #1d4ed8; font-weight: 700; }
+.sidebar-note { color: #64748b; font-size: 0.77rem; margin: 25px 12px 0; }
+.content { min-width: 0; padding: clamp(18px, 3.5vw, 48px); }
+.page-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 28px; }
+h1 { font-size: clamp(1.55rem, 2.5vw, 2.2rem); letter-spacing: -0.025em; margin: 3px 0; line-height: 1.2; }
+.eyebrow { color: #4f6485; font-size: 0.77rem; font-weight: 750; text-transform: uppercase; letter-spacing: 0.09em; margin: 0 0 6px; }
+.subtle, .hint { color: #64748b; margin: 9px 0 0; }
+.panel { border: 1px solid #dce3ee; background: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgb(15 23 42 / 3%); }
+.table-scroll { overflow-x: auto; border-radius: 12px 12px 0 0; }
+table { border-collapse: collapse; width: 100%; min-width: 650px; text-align: left; font-size: 0.86rem; }
+th { background: #f1f5f9; color: #475569; font-weight: 700; white-space: nowrap; }
+th, td { padding: 12px 14px; border-bottom: 1px solid #e9edf3; vertical-align: middle; }
+tbody tr:hover { background: #fafcff; }
+td { max-width: 300px; overflow-wrap: anywhere; }
+.actions { white-space: nowrap; }
+.actions form { display: inline; margin-left: 5px; }
+.button { display: inline-block; text-align: center; padding: 9px 15px; border-radius: 8px; border: 1px solid #cbd5e1; color: #334155; background: #fff; font-weight: 650; text-decoration: none; font-size: 0.88rem; }
+.button:hover { background: #edf2f9; }
+.button.primary { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+.button.primary:hover { background: #1e40af; }
+.button.danger { color: #b91c1c; border-color: #fecaca; }
+.button.danger:hover { background: #fef2f2; }
+.button.small { font-size: 0.79rem; padding: 6px 10px; }
+.empty { text-align: center; padding: 35px; color: #64748b; }
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; gap: 16px; }
+.pagination div { display: flex; gap: 8px; }
+.form-panel { max-width: 1000px; padding: clamp(20px, 3vw, 36px); }
+.hint { background: #f1f5f9; padding: 12px 16px; border-radius: 8px; margin: 0 0 20px; }
+.field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+.field { min-width: 0; }
+.field label { display: block; margin-bottom: 7px; font-size: 0.88rem; font-weight: 650; }
+.field label span { color: #b91c1c; }
+.field input, .field textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; color: #0f172a; }
+.field textarea { resize: vertical; }
+.field small { display: block; color: #64748b; margin-top: 5px; }
+.form-actions { display: flex; gap: 10px; margin-top: 30px; }
+.error-panel { max-width: 640px; padding: 35px; }
+.error-panel p { margin-bottom: 24px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+@media (max-width: 760px) {
+  .app { display: block; }
+  .sidebar { border-right: 0; border-bottom: 1px solid #e2e8f0; padding: 15px; }
+  .brand { padding: 5px 0 12px; }
+  .nav-title, .sidebar-note { display: none; }
+  nav { display: flex; overflow-x: auto; gap: 4px; padding-bottom: 3px; }
+  nav a { flex-shrink: 0; white-space: nowrap; padding: 8px 10px; }
+  .page-heading { align-items: flex-start; }
+}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">{{ table_name.replace('_', ' ')|title }}</p>
+      <h1>{{ title }}</h1>
+      <p class="subtle">Required fields are marked with an asterisk.</p>
+    </div>
+    <a class="button" href="{{ url_for('table_view', table_name=table_name) }}">Back to table</a>
+  </header>
+  <section class="panel form-panel">
+    {% if record %}
+      <p class="hint">Primary key values cannot be changed. Delete and recreate a row to change its identity.</p>
+    {% endif %}
+    <form action="{{ action }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field-grid">
+        {% for column in table.columns %}
+          {% if not (record and column.primary_key) %}
+            {% set value = display_value(record[column.name]) if record else '' %}
+            <div class="field">
+              <label for="col-{{ column.name }}">
+                {{ column.name.replace('_', ' ')|title }}
+                {% if not column.nullable and column.default is none and column.server_default is none %}<span aria-label="required">*</span>{% endif %}
+              </label>
+              {% if is_long_text(column) %}
+                <textarea id="col-{{ column.name }}" name="{{ column.name }}" rows="4"
+                  {% if not column.nullable %}required{% endif %}>{{ value }}</textarea>
+              {% else %}
+                <input id="col-{{ column.name }}" name="{{ column.name }}"
+                  type="{{ input_type(column) }}" value="{{ value }}"
+                  {% if input_type(column) == "number" %}step="any"{% endif %}
+                  {% if input_type(column) == "time" %}step="1"{% endif %}
+                  {% if not column.nullable and column.default is none and column.server_default is none %}required{% endif %}>
+              {% endif %}
+              {% if column.primary_key %}<small>Primary key</small>{% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="button primary">{{ "Save changes" if record else "Create record" }}</button>
+        <a class="button" href="{{ url_for('table_view', table_name=table_name) }}">Cancel</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

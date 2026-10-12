@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Training database{% endblock %} | CRUD Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Table navigation">
+      <a class="brand" href="{{ url_for('home') }}">Training DB <span>Admin</span></a>
+      <p class="nav-title">Tables</p>
+      <nav>
+        {% for name in navigation %}
+          <a href="{{ url_for('table_view', table_name=name) }}"
+             {% if table_name is defined and name == table_name %}aria-current="page"{% endif %}>
+            {{ name.replace('_', ' ')|title }}
+          </a>
+        {% endfor %}
+      </nav>
+      <p class="sidebar-note">Local administrative demo. Treat database records as sensitive.</p>
+    </aside>
+    <main class="content" id="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>
