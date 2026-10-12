@@ -11,7 +11,7 @@ from decimal import Decimal
 from typing import Mapping
 
 from sqlalchemy import (
-    Boolean, Date, DateTime, Float, Integer, MetaData, Numeric, Text,
+    Boolean, Date, DateTime, Float, Integer, MetaData, Numeric, Text, Time,
     and_, delete, insert, inspect, select, update,
 )
 from sqlalchemy.engine import Engine
