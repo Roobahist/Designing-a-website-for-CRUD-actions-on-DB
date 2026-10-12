@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Error {{ status }}{% endblock %}
+{% block content %}
+  <div class="panel error-panel" role="alert">
+    <p class="eyebrow">Request could not be completed</p>
+    <h1>Error {{ status }}</h1>
+    <p>{{ message }}</p>
+    <a class="button primary" href="{{ url_for('home') }}">Return to tables</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [master, "modernize/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+      - name: Compile Python
+        run: python -m compileall -q crud_app main.py tests
+      - name: Lint
+        run: ruff check .
+      - name: Test
+        run: pytest -q
+
+  mysql-integration:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: db_project
+          MYSQL_USER: crud
+          MYSQL_PASSWORD: mysql-test-password
+          MYSQL_ROOT_PASSWORD: mysql-root-test-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -pmysql-root-test-password"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_MYSQL_DATABASE_URL: mysql+pymysql://crud:mysql-test-password@127.0.0.1:3306/db_project
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+      - name: Test schema, seed, and CRUD on MySQL 8
+        run: pytest -q tests/test_mysql_integration.py

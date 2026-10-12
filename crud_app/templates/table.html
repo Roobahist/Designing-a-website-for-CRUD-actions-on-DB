@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ table_name.replace('_', ' ')|title }}{% endblock %}
+{% block content %}
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Database table</p>
+      <h1>{{ table_name.replace('_', ' ')|title }}</h1>
+      <p class="subtle">Manage existing records and their relationships.</p>
+    </div>
+    <a class="button primary" href="{{ url_for('new_record', table_name=table_name) }}">Add record</a>
+  </header>
+
+  <div class="panel">
+    <div class="table-scroll" tabindex="0" aria-label="Scrollable table records">
+      <table>
+        <caption class="sr-only">Records in {{ table_name }}</caption>
+        <thead>
+          <tr>
+            {% for column in table.columns %}
+              <th scope="col">{{ column.name.replace('_', ' ')|title }}</th>
+            {% endfor %}
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              {% for column in table.columns %}
+                <td>{{ display_value(record[column.name]) }}</td>
+              {% endfor %}
+              <td class="actions">
+                {% set encoded = record_key(table_name, record) %}
+                <a class="button small" href="{{ url_for('edit_record', table_name=table_name, encoded=encoded) }}">Edit</a>
+                <form method="post" action="{{ url_for('delete_record', table_name=table_name, encoded=encoded) }}"
+                      onsubmit="return confirm('Delete this record? This action cannot be undone.');">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="button small danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="{{ table.columns|length + 1 }}" class="empty">No records found in this table.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <footer class="pagination">
+      <span>Page {{ page }}</span>
+      <div>
+        {% if page > 1 %}
+          <a class="button small" href="{{ url_for('table_view', table_name=table_name, page=page-1) }}">Previous</a>
+        {% endif %}
+        {% if has_more %}
+          <a class="button small" href="{{ url_for('table_view', table_name=table_name, page=page+1) }}">Next</a>
+        {% endif %}
+      </div>
+    </footer>
+  </div>
+{% endblock %}

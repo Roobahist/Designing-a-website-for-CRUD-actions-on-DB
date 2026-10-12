@@ -1,0 +1,26 @@
+# Secrets and developer-specific settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.coverage
+
+# Local databases and tools
+*.db
+*.sqlite
+*.sqlite3
+.idea/
+.vscode/
+.DS_Store
