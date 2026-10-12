@@ -80,7 +80,7 @@ python -m compileall -q crud_app main.py tests
 pytest -q
 ```
 
-Tests use an in-memory SQLite engine and do not touch a real MySQL database. The main CI workflow runs lint, compilation, and regression tests on pull requests and pushes. Production-schema and MySQL container smoke tests are still recommended before deploying.
+Unit and HTTP regression tests use disposable in-memory SQLite tables. A separate CI job initializes MySQL 8 with the original schema and synthetic seed records, then exercises the application against real reflected MySQL types. Neither job touches a production database. A deployment-specific smoke test is still recommended.
 
 ## CRUD behavior and compatibility
 
